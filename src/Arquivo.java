@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class Arquivo {
 
@@ -9,31 +10,41 @@ public class Arquivo {
     private byte[] bytes;
     private String tipo;
     private String extensao;
+    private final String caminho;
 
-    public Arquivo() {
+    public Arquivo(String caminho) {
+        this.caminho = caminho;
     }
 
     public Arquivo(File file) throws IOException {
         this.nome = file.getName();
+        this.caminho = file.getPath();
         this.bytes = Files.readAllBytes(Paths.get(file.getPath()));
-        this.extensao = this.nome.split("\\.")[this.nome.split("\\.").length - 1];
-    }
-
-    public Arquivo(String nome, byte[] bytes, String tipo, String extensao) {
-        this.nome = nome;
-        this.bytes = bytes;
-        this.tipo = tipo;
-        this.extensao = extensao;
+        this.extensao = getExtensao(file);
     }
 
     public static Arquivo criarArquivoTipado(File file) throws IOException {
-        Arquivo arquivo = new Arquivo();
-        arquivo.setNome(file.getName());
-        arquivo.setBytes(Files.readAllBytes(Paths.get(file.getPath())));
-        String tipoExt = arquivo.getNome().split("_", 2)[1];
-        arquivo.setTipo(tipoExt.split("\\.")[0]);
-        arquivo.setExtensao(tipoExt.split("\\.")[tipoExt.split("\\.").length - 1]);
+        Arquivo arquivo = new Arquivo(file.getPath());
+        try {
+            arquivo.setNome(file.getName());
+            arquivo.setBytes(Files.readAllBytes(Paths.get(file.getPath())));
+            arquivo.setExtensao(getExtensao(file));
+            String tipoExt = arquivo.getNome().split("_", 2)[1];
+            arquivo.setTipo(tipoExt.split("\\.")[0]);
+        }catch (Exception ex) {
+            arquivo = new Arquivo(file);
+        }
+
         return arquivo;
+    }
+
+    public static String getExtensao(File file) {
+        String name = file.getName();
+        int index = name.lastIndexOf(".");
+        if (index == -1) {
+            return "";
+        }
+        return name.substring(index + 1);
     }
 
     public String getNome() {
@@ -66,5 +77,10 @@ public class Arquivo {
 
     public void setBytes(byte[] bytes) {
         this.bytes = bytes;
+    }
+
+    public String[] getRootList(String caminhoInicial) {
+        String path = this.caminho.replace(caminhoInicial, "").replace(this.nome, "");
+        return Arrays.stream(path.split("\\\\")).filter(s -> !s.isEmpty()).toArray(String[]::new);
     }
 }
