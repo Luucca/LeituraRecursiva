@@ -19,7 +19,7 @@ public class Empreendedor {
 	}
 
 	public void imprimirArvore(boolean detalhar) {
-		System.out.println("• Empreendedor: " + this.id);
+		System.out.println("- Empreendedor: " + this.id);
 		Logger.imprimirArvore(new ArrayList<>(Collections.singletonList(this.diretorio)), detalhar, 1);
 	}
 

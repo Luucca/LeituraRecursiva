@@ -6,14 +6,14 @@ import java.util.Objects;
 
 public class Gerenciador {
 
-    private final String caminhoInicial;
+    public static String CAMINHO_INICIAL;
     private final ArrayList<Empreendedor> empreendedores;
 
-    public Gerenciador(String caminhoInicial) {
-        this.caminhoInicial = caminhoInicial;
+    public Gerenciador(String CAMINHO_INICIAL) {
+        this.CAMINHO_INICIAL = CAMINHO_INICIAL;
         this.empreendedores = new ArrayList<>();
 
-        File folder = new File(caminhoInicial);
+        File folder = new File(CAMINHO_INICIAL);
         for (final File file : Objects.requireNonNull(folder.listFiles())) {
             if (file.isDirectory()) {
                 Empreendedor empreendedor = new Empreendedor(file.getName());
@@ -30,12 +30,12 @@ public class Gerenciador {
     }
 
     private String getDiretorioEmpreendedor(Empreendedor empreendedor) {
-        return Paths.get(this.caminhoInicial, empreendedor.getId()).toString();
+        return Paths.get(this.CAMINHO_INICIAL, empreendedor.getId()).toString();
     }
 
     public void popularDiretorios(Empreendedor empreendedor) throws IOException {
         if(empreendedor.getId().matches("\\d+")) {
-            popularDiretorios(empreendedor, null, Paths.get(caminhoInicial, empreendedor.getId()).toString());
+            popularDiretorios(empreendedor, null, Paths.get(CAMINHO_INICIAL, empreendedor.getId()).toString());
         }
     }
 

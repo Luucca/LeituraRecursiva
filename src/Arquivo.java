@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 public class Arquivo {
 
+    private String codigo;
     private String nome;
     private byte[] bytes;
     private String tipo;
@@ -30,6 +31,7 @@ public class Arquivo {
             arquivo.setBytes(Files.readAllBytes(Paths.get(file.getPath())));
             arquivo.setExtensao(getExtensao(file));
             String tipoExt = arquivo.getNome().split("_", 2)[1];
+            arquivo.setCodigo(arquivo.getNome().split("_")[0]);
             arquivo.setTipo(tipoExt.split("\\.")[0]);
         }catch (Exception ex) {
             arquivo = new Arquivo(file);
@@ -79,8 +81,20 @@ public class Arquivo {
         this.bytes = bytes;
     }
 
-    public String[] getRootList(String caminhoInicial) {
-        String path = this.caminho.replace(caminhoInicial, "").replace(this.nome, "");
-        return Arrays.stream(path.split("\\\\")).filter(s -> !s.isEmpty()).toArray(String[]::new);
+    public String[] getRootList() {
+        if(Gerenciador.CAMINHO_INICIAL != null) {
+            String path = this.caminho.replace(Gerenciador.CAMINHO_INICIAL, "").replace(this.nome, "");
+            return Arrays.stream(path.split("/")).filter(s -> !s.isEmpty()).toArray(String[]::new);
+        }
+
+        return new String[0];
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 }
